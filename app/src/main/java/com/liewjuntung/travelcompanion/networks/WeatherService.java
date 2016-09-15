@@ -1,6 +1,6 @@
 package com.liewjuntung.travelcompanion.networks;
 
-import com.liewjuntung.travelcompanion.models.YahooQuery;
+import com.liewjuntung.travelcompanion.models.yahoo.YahooQueryResult;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -14,5 +14,5 @@ import retrofit2.http.Query;
 public interface WeatherService {
 
     @GET("/v1/public/yql")
-    Call<YahooQuery> yahooQuery(@Query("q") String query);
+    Call<YahooQueryResult> yahooQuery(@Query("q") String query);
 }

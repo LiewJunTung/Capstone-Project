@@ -1,6 +1,6 @@
 package com.liewjuntung.travelcompanion.networks;
 
-import com.liewjuntung.travelcompanion.models.YahooQuery;
+import com.liewjuntung.travelcompanion.models.yahoo.YahooQueryResult;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -55,7 +55,7 @@ public class RetrofitUtility {
     }
 
 
-    public static Call<YahooQuery> getWeatherByLongAndLat(WeatherService service, double longitude, double latitude){
+    public static Call<YahooQueryResult> getWeatherByLongAndLat(WeatherService service, double longitude, double latitude) {
         String query;
 
             query = String.format(Locale.getDefault(),
