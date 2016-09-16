@@ -33,6 +33,11 @@
             android:label="@string/title_activity_trip"
             android:theme="@style/AppTheme" />
         <activity android:name=".ui.create_itinerary.CreateItineraryActivity"/>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/GEO_API_KEY" />
+
     </application>
 
 </manifest>
