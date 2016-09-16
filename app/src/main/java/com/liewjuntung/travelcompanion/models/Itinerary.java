@@ -3,6 +3,9 @@ package com.liewjuntung.travelcompanion.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.format.DateTimeFormatter;
+
 /**
  * Popular Movie App
  * Created by jtlie on 9/15/2016.
@@ -34,6 +37,19 @@ public class Itinerary implements Parcelable {
     public Itinerary() {
     }
 
+    public Itinerary(int id, int tripId, String name, String dateTime, String place, double latitude, double longitude, int weatherCode, int highTemp, int lowTemp) {
+        this.id = id;
+        this.tripId = tripId;
+        this.name = name;
+        this.dateTime = dateTime;
+        this.place = place;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.weatherCode = weatherCode;
+        this.highTemp = highTemp;
+        this.lowTemp = lowTemp;
+    }
+
     protected Itinerary(Parcel in) {
         this.id = in.readInt();
         this.tripId = in.readInt();
@@ -45,6 +61,14 @@ public class Itinerary implements Parcelable {
         this.weatherCode = in.readInt();
         this.highTemp = in.readInt();
         this.lowTemp = in.readInt();
+    }
+
+    public String getDisplayTime(){
+        if (dateTime == null){
+            return null;
+        }
+        LocalDateTime localDateTime = LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        return localDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm aa"));
     }
 
     public int getId() {

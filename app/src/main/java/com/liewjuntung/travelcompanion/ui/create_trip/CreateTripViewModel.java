@@ -86,7 +86,7 @@ public class CreateTripViewModel extends BaseObservable {
     public void clickFromDateDialog(View view) {
         LocalDateTime date = LocalDateTime.now();
 
-        DatePickerDialog dialog = new DatePickerDialog(mActivity, R.style.AppTheme_AlertDialog, new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog dialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 LocalDate localDate = LocalDate.of(year, month + 1, dayOfMonth);
@@ -94,7 +94,7 @@ public class CreateTripViewModel extends BaseObservable {
                 notifyChange();
             }
         }, date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
-        dialog.getDatePicker().setMinDate(new Date().getTime());
+        dialog.getDatePicker().setMinDate(date.toLocalDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         if (dateUntil != null) {
             LocalDate dateTo = LocalDate.parse(dateUntil);
             dialog.getDatePicker().setMaxDate(dateTo.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
@@ -103,10 +103,14 @@ public class CreateTripViewModel extends BaseObservable {
     }
 
     public void clickToDateDialog(View view) {
-        LocalDate date = LocalDate.parse(dateFrom);
-
+        LocalDate date;
+        if (dateFrom == null) {
+            date = LocalDate.now();
+        } else {
+            date = LocalDate.parse(dateFrom);
+        }
         new Date().getTime();
-        DatePickerDialog dialog = new DatePickerDialog(mActivity, R.style.AppTheme_AlertDialog, new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog dialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 LocalDate localDate = LocalDate.of(year, month + 1, dayOfMonth);

@@ -12,17 +12,6 @@ import org.threeten.bp.format.DateTimeFormatter;
  */
 
 public class Trip implements Parcelable {
-    public static final Creator<Trip> CREATOR = new Creator<Trip>() {
-        @Override
-        public Trip createFromParcel(Parcel source) {
-            return new Trip(source);
-        }
-
-        @Override
-        public Trip[] newArray(int size) {
-            return new Trip[size];
-        }
-    };
     private int id;
     private String name;
     private String dateFrom;
@@ -43,16 +32,6 @@ public class Trip implements Parcelable {
     }
 
     public Trip() {
-    }
-
-    protected Trip(Parcel in) {
-        this.id = in.readInt();
-        this.name = in.readString();
-        this.dateFrom = in.readString();
-        this.dateUntil = in.readString();
-        this.country = in.readString();
-        this.place = in.readString();
-        this.isFuture = in.readByte() != 0;
     }
 
     public static Creator<Trip> getCREATOR() {
@@ -151,6 +130,30 @@ public class Trip implements Parcelable {
         dest.writeString(this.dateUntil);
         dest.writeString(this.country);
         dest.writeString(this.place);
+        dest.writeString(this.image);
         dest.writeByte(this.isFuture ? (byte) 1 : (byte) 0);
     }
+
+    protected Trip(Parcel in) {
+        this.id = in.readInt();
+        this.name = in.readString();
+        this.dateFrom = in.readString();
+        this.dateUntil = in.readString();
+        this.country = in.readString();
+        this.place = in.readString();
+        this.image = in.readString();
+        this.isFuture = in.readByte() != 0;
+    }
+
+    public static final Creator<Trip> CREATOR = new Creator<Trip>() {
+        @Override
+        public Trip createFromParcel(Parcel source) {
+            return new Trip(source);
+        }
+
+        @Override
+        public Trip[] newArray(int size) {
+            return new Trip[size];
+        }
+    };
 }

@@ -18,6 +18,7 @@ public class CustomBindingAdapter {
                 .load(url)
                 .placeholder(R.drawable.placeholder_grey)
                 .error(R.drawable.trip_placeholder)
+                .centerCrop().fit()
                 .into(imageView);
     }
 

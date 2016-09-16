@@ -6,8 +6,8 @@
     <data>
 
         <variable
-            name="trip"
-            type="com.liewjuntung.travelcompanion.models.Trip" />
+            name="itinerary"
+            type="com.liewjuntung.travelcompanion.models.Itinerary" />
     </data>
 
     <android.support.v7.widget.CardView
@@ -22,14 +22,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:padding="@dimen/activity_horizontal_margin">
-
-            <ImageView
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="2"
-                app:imageUrl="@{trip.image}"
-                tools:background="@color/primary_light" />
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -42,26 +34,33 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/content_space"
-                    android:text="@{trip.displayDate}"
+                    android:text="@{itinerary.displayTime}"
                     android:textStyle="bold"
-                    tools:text="20/8/2016 - 26/8/2016" />
+                    tools:text="08:00 a.m." />
 
                 <TextView
-                    style="@style/Base.TextAppearance.AppCompat.Button"
+                    style="@style/Base.TextAppearance.AppCompat.Subhead"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/content_space"
-                    android:text="@{trip.country}"
-                    tools:text="20/8/2016 - 26/8/2016" />
+                    android:text="@{itinerary.name}"
+                    tools:text="Watch Sunrise" />
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="bottom"
                     android:layout_marginBottom="@dimen/content_space"
                     android:layout_marginTop="@dimen/content_space"
-                    android:text="@{trip.name}"
+                    android:text="@{itinerary.place}"
                     tools:text="Visit Bali, Indonesia" />
             </LinearLayout>
+            <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            tools:background="@drawable/ic_wb_cloudy_black_24dp" />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 </layout>

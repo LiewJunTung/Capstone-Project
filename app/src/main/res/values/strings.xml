@@ -10,4 +10,11 @@
     <string name="text_place">Place</string>
     <string name="trip_name">Trip\'s name</string>
     <string name="title_activity_trip">TripActivity</string>
+    <string name="text_itinerary_name">Itinerary Name</string>
+    <string name="text_time">Time</string>
+    <string name="text_date">Date</string>
+    <string name="text_place_name">Place Name</string>
+    <string name="text_note">Note</string>
+    <string name="text_create_itinerary">Create Itinerary</string>
+    <string name="text_permission_location">Please enable permission for Location to use this feature</string>
 </resources>

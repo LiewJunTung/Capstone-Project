@@ -16,8 +16,10 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.liewjuntung.travelcompanion.R;
+import com.liewjuntung.travelcompanion.models.Trip;
 import com.liewjuntung.travelcompanion.providers.TravelCompanionProvider;
 import com.liewjuntung.travelcompanion.ui.create_trip.CreateTripActivity;
+import com.liewjuntung.travelcompanion.ui.trip.TripActivity;
 import com.liewjuntung.travelcompanion.utility.TravelCompanionUtility;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -56,6 +58,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mMainAdapter = new MainAdapter(null);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(mMainAdapter);
+        mMainAdapter.setTripClickListener(new TripClickListener() {
+            @Override
+            public void clickTrip(Trip trip) {
+                Intent intent = new Intent(MainActivity.this, TripActivity.class);
+                intent.putExtra(TripActivity.TRIP_INTENT, trip);
+                startActivity(
+                        intent
+                );
+            }
+        });
     }
 
     @Override

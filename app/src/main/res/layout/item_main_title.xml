@@ -17,5 +17,5 @@
         android:layout_marginStart="@dimen/activity_horizontal_margin"
         android:orientation="vertical"
         android:text="@{title}"
-        tools:text="text"></TextView>
+        tools:text="text"/>
 </layout>

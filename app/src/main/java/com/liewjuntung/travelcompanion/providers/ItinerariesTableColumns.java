@@ -30,6 +30,9 @@ public interface ItinerariesTableColumns {
     @DataType(TEXT) @NotNull
     String NAME = "name";
 
+    @DataType(TEXT)
+    String NOTE = "note";
+
     @DataType(TEXT) @NotNull String DATE_TIME = "date_time";
 
     @DataType(TEXT) @NotNull String PLACE = "place";

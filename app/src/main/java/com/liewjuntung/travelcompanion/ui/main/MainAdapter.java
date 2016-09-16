@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import com.liewjuntung.travelcompanion.R;
@@ -30,6 +31,8 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     int[] titleIndex;
 
+    TripClickListener mTripClickListener;
+
     public MainAdapter(Cursor cursor) {
         setMainListCursor(cursor);
     }
@@ -38,6 +41,10 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void setMainListCursor(Cursor cursor) {
         this.mainList = TravelCompanionUtility.initMainList(cursor);
         notifyDataSetChanged();
+    }
+
+    public void setTripClickListener(TripClickListener tripClickListener) {
+        mTripClickListener = tripClickListener;
     }
 
     @Override
@@ -67,14 +74,35 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
+    private void clickTrip(Trip trip){
+        if (mTripClickListener != null){
+            mTripClickListener.clickTrip(trip);
+        }
+    }
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof TextViewHolder) {
             ((TextViewHolder) holder).binding.setTitle((String) mainList.get(position));
         } else if (holder instanceof UpcomingItemViewHolder) {
+
             ((UpcomingItemViewHolder) holder).binding.setTrip((Trip) mainList.get(position));
+            final Trip trip = ((UpcomingItemViewHolder) holder).binding.getTrip();
+            ((UpcomingItemViewHolder) holder).binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickTrip(trip);
+                }
+            });
         } else {
             ((CurrentItemViewHolder) holder).binding.setTrip((Trip) mainList.get(position));
+            final Trip trip = ((CurrentItemViewHolder) holder).binding.getTrip();
+            ((CurrentItemViewHolder) holder).binding.getRoot().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    clickTrip(trip);
+                }
+            });
         }
     }
 
