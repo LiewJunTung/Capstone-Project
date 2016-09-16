@@ -29,7 +29,6 @@ import static org.junit.Assert.assertNull;
 public class WeatherUnitTest {
 
     private YahooQueryResult mQueryResult;
-    private List<Weather> mWeatherList;
     private WeatherService mWeatherService;
 
 

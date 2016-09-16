@@ -20,13 +20,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class RetrofitUtility {
+    public static final String WEATHER_BASE_URL = "https://query.yahooapis.com";
+    public static final String PIXABAY_BASE_URL = "https://pixabay.com";
+
     public static WeatherService initWeatherService(){
+        return initRetrofitService(WEATHER_BASE_URL, WeatherService.class);
+    }
+
+    public static ImageService initImageService() {
+        return initRetrofitService(PIXABAY_BASE_URL, ImageService.class);
+    }
+
+    private static <T> T initRetrofitService(String baseUrl, final Class<T> service) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://query.yahooapis.com")
+                .baseUrl(baseUrl)
                 .client(getInterceptor())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
-        return retrofit.create(WeatherService.class);
+        return retrofit.create(service);
     }
 
     private static HttpLoggingInterceptor loggingInterceptor() {

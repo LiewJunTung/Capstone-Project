@@ -27,4 +27,7 @@ public interface TripsTableColumns {
     @DataType(TEXT) @NotNull String COUNTRY = "country";
 
     @DataType(TEXT) String PLACE = "place";
+
+    @DataType(TEXT)
+    String IMAGE = "image";
 }
