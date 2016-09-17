@@ -5,20 +5,18 @@
 
         <variable
             name="vm"
-            type="com.liewjuntung.travelcompanion.ui.create_itinerary.CreateItineraryViewModel"/>
-
-        <import type="android.view.View"/>
+            type="com.liewjuntung.travelcompanion.ui.modify_itinerary.ModifyItineraryViewModel"/>
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:app="http://schemas.android.com/apk/res-auto"
                   xmlns:tools="http://schemas.android.com/tools"
-                  android:id="@+id/activity_create_trip"
+                  android:id="@+id/activity_modify_trip"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:fitsSystemWindows="true"
                   android:orientation="vertical"
-                  tools:context="com.liewjuntung.travelcompanion.ui.create_itinerary.CreateItineraryActivity">
+                  tools:context="com.liewjuntung.travelcompanion.ui.modify_itinerary.CreateItineraryActivity">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
@@ -34,7 +32,7 @@
 
         <android.support.v4.widget.NestedScrollView
 
-            android:id="@+id/create_itinerary_scrollview"
+            android:id="@+id/modify_itinerary_scrollview"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -146,7 +144,7 @@
                 </android.support.design.widget.TextInputLayout>
 
                 <FrameLayout
-                    android:id="@+id/create_trip_place_button"
+                    android:id="@+id/modify_trip_place_button"
                     android:layout_width="wrap_content"
                     android:layout_height="?attr/actionBarSize"
                     android:background="?selectableItemBackground"
@@ -198,62 +196,6 @@
                         android:text="@{vm.note}"
                         tools:text="2000"/>
                 </android.support.design.widget.TextInputLayout>
-
-                <android.support.v7.widget.GridLayout
-                    android:id="@+id/weather_grid"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="14dp"
-                    android:layout_marginEnd="@dimen/drawable_top_bottom_margin"
-                    android:layout_marginStart="@dimen/drawable_top_bottom_margin"
-                    android:layout_marginTop="20dp"
-                    android:visibility="@{vm.hasWeatherForecast?View.VISIBLE:View.GONE}"
-                    app:columnCount="2"
-                    app:layout_columnSpan="3"
-                    app:layout_columnWeight="1"
-                    >
-
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="80dp"
-                        android:src="@drawable/weather_sunny"
-                        app:layout_columnSpan="2"
-                        />
-
-                    <TextView
-                        android:text="@string/text_high"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        app:layout_columnSpan="1"
-                        app:layout_columnWeight="1"
-                        />
-
-                    <TextView
-                        android:text="@{vm.tempHighString}"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
-                        app:layout_columnSpan="1"
-                        app:layout_columnWeight="1"
-                        tools:text="60"
-                        />
-
-                    <TextView
-                        android:text="@string/text_low"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                        app:layout_columnSpan="1"
-                        app:layout_columnWeight="1"
-                        />
-
-                    <TextView
-                        android:text="@{vm.tempLowString}"
-                        android:textAlignment="center"
-                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
-                        app:layout_columnSpan="1"
-                        app:layout_columnWeight="1"
-                        />
-                </android.support.v7.widget.GridLayout>
-
             </android.support.v7.widget.GridLayout>
         </android.support.v4.widget.NestedScrollView>
 
@@ -266,6 +208,6 @@
             android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:enabled="@{vm.validated}"
             android:onClick="@{vm.saveData}"
-            android:text="@string/text_create_itinerary"/>
+            android:text="@string/text_modify_itinerary"/>
     </LinearLayout>
 </layout>

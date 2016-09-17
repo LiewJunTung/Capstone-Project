@@ -94,7 +94,7 @@ public class WeatherPlaceUnitTest {
         double latitude = 116.4074;
         YahooQueryResult yahooQueryResult = null;
         try {
-            Call<YahooQueryResult> query = RetrofitUtility.getWeatherByLongAndLat(mWeatherService, longitude, latitude);
+            Call<YahooQueryResult> query = RetrofitUtility.getWeatherByLongAndLat(mWeatherService, latitude, longitude);
             yahooQueryResult = query.execute().body();
         } catch (IOException e) {
             e.printStackTrace();
@@ -118,7 +118,7 @@ public class WeatherPlaceUnitTest {
         double latitude = 11416.404174;
         YahooQueryResult yahooQueryResult = null;
         try {
-            Call<YahooQueryResult> query = RetrofitUtility.getWeatherByLongAndLat(mWeatherService, longitude, latitude);
+            Call<YahooQueryResult> query = RetrofitUtility.getWeatherByLongAndLat(mWeatherService, latitude, longitude);
             yahooQueryResult = query.execute().body();
         } catch (IOException e) {
             e.printStackTrace();

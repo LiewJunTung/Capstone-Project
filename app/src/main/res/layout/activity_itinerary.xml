@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <data>
+
+        <variable
+            name="itinerary"
+            type="com.liewjuntung.travelcompanion.models.Itinerary"/>
+    </data>
+
+    <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/activity_itinerary"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context="com.liewjuntung.travelcompanion.ui.itinerary.ItineraryActivity"
+        >
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <include
+                android:id="@+id/toolbar"
+                layout="@layout/main_toolbar"/>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.widget.NestedScrollView
+
+            android:id="@+id/create_itinerary_scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            >
+
+            <android.support.v7.widget.GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+
+                app:columnCount="3">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginEnd="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginStart="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/ic_directions_bike_black_24dp"
+                    android:contentDescription="@string/text_itinerary_name"
+                    app:layout_columnSpan="1"
+                    app:layout_gravity="fill"
+                    />
+
+                <TextView
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center_vertical"
+                    android:hint="@string/not_available"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@{itinerary.name}"
+                    app:layout_columnSpan="2"
+                    app:layout_columnWeight="2"
+                    tools:text="2000"
+                    />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginEnd="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginStart="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginTop="@dimen/drawable_top_bottom_margin"
+                    android:background="@drawable/ic_event_black_24dp"
+                    android:contentDescription="@string/text_date"
+                    app:layout_columnSpan="1"
+                    />
+
+                <TextView
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center_vertical"
+                    android:hint="@string/not_available"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@{itinerary.displayDate}"
+                    app:layout_columnSpan="2"
+                    app:layout_columnWeight="2"
+                    tools:text="2000"
+                    />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginEnd="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginStart="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginTop="@dimen/drawable_top_bottom_margin"
+                    android:contentDescription="@string/text_time"
+                    android:src="@drawable/ic_access_time_black_24dp"
+                    app:layout_columnSpan="1"
+                    />
+
+                <TextView
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center_vertical"
+                    android:hint="@string/not_available"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@{itinerary.displayTime}"
+                    app:layout_columnSpan="2"
+                    app:layout_columnWeight="2"
+                    tools:text="2000"
+                    />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginEnd="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginStart="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginTop="@dimen/drawable_top_bottom_margin"
+                    android:background="@drawable/ic_map_black_24dp"
+                    android:contentDescription="@string/text_place"
+                    app:layout_columnSpan="1"
+                    />
+
+                <TextView
+                    android:id="@+id/editText2"
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center_vertical"
+                    android:hint="@string/not_available"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@{itinerary.place}"
+                    app:layout_columnSpan="2"
+                    app:layout_columnWeight="2"
+                    tools:text="2000"
+
+                    />
+
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginEnd="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginStart="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginTop="@dimen/drawable_top_bottom_margin"
+                    android:background="@drawable/ic_insert_comment_black_24dp"
+                    android:contentDescription="@string/text_comments"
+                    app:layout_columnSpan="1"
+                    />
+
+                <TextView
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center_vertical"
+                    android:hint="@string/not_available"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@{itinerary.note}"
+                    app:layout_columnSpan="2"
+                    app:layout_columnWeight="2"
+                    tools:text="2000"
+                    />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginEnd="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginStart="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginTop="@dimen/drawable_top_bottom_margin"
+                    android:background="@drawable/ic_wb_cloudy_black_24dp"
+                    android:contentDescription="@string/text_comments"
+                    app:layout_columnSpan="1"
+                    />
+
+                <TextView
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center_vertical"
+                    android:hint="@string/not_available"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@{itinerary.place}"
+                    app:layout_columnSpan="2"
+                    app:layout_columnWeight="2"
+                    tools:text="2000"
+                    />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginEnd="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginStart="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginTop="@dimen/drawable_top_bottom_margin"
+                    android:background="@drawable/ic_insert_comment_black_24dp"
+                    android:contentDescription="@string/text_comments"
+                    app:layout_columnSpan="1"
+                    />
+
+                <TextView
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center_vertical"
+                    android:hint="@string/not_available"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="5dp"
+                    android:text="@{itinerary.place}"
+                    app:layout_columnSpan="2"
+                    app:layout_columnWeight="2"
+                    tools:text="2000"
+                    />
+
+                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                          android:id="@+id/map"
+                          android:name="com.google.android.gms.maps.MapFragment"
+                          android:layout_width="match_parent"
+                          android:layout_height="240dp"
+                          android:layout_marginBottom="@dimen/content_space"
+                          android:layout_marginTop="@dimen/content_space"
+                          app:layout_columnSpan="3"
+                    />
+
+                <fragment
+                    android:id="@+id/streetviewpanorama"
+                    android:name="com.google.android.gms.maps.StreetViewPanoramaFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp"
+                    android:layout_marginBottom="@dimen/content_space"
+                    android:layout_marginTop="@dimen/content_space"
+                    app:layout_columnSpan="3"
+                    />
+            </android.support.v7.widget.GridLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </LinearLayout>
+</layout>

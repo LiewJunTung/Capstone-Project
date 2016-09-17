@@ -67,6 +67,7 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
     private int tempHigh;
     private int tempLow;
     private boolean hasWeatherForecast = false;
+    private boolean isLoadingWeather = false;
     private final Callback<YahooQueryResult> mCallback = new Callback<YahooQueryResult>() {
         @Override
         public void onResponse(Call<YahooQueryResult> call, Response<YahooQueryResult> response) {
@@ -80,13 +81,14 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
                         break;
                     }
                 }
-
             }
+            isLoadingWeather = false;
         }
 
         @Override
         public void onFailure(Call<YahooQueryResult> call, Throwable t) {
             Log.d(TAG, "onFailure: " + t.getMessage(), t);
+            isLoadingWeather = false;
         }
     };
     private Timer mTimer = new Timer();
@@ -138,6 +140,14 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
         return tempLow;
     }
 
+    public String getTempLowString() {
+        return Integer.toString(tempLow);
+    }
+
+    public String getTempHighString() {
+        return Integer.toString(tempHigh);
+    }
+
     public boolean isHasWeatherForecast() {
         return hasWeatherForecast;
     }
@@ -151,6 +161,7 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 LocalDate localDate = LocalDate.of(year, month + 1, dayOfMonth);
                 mDate = localDate.toString();
+                initWeatherForecastLatLong();
                 notifyChange();
             }
         }, date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
@@ -179,7 +190,20 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
 
     //delay 500 milliseconds as soon as aftertextlistener fired
     public void initWeatherForecastLatLong() {
-        if (place == null || mDate == null) {
+        if (latitude == 0.0 && longitude == 0.0) {
+            initWeatherForecastPlace();
+            return;
+        }
+        mTimer.cancel();
+        if (place == null || mDate == null || isLoadingWeather) {
+            return;
+        }
+        isLoadingWeather = true;
+        RetrofitUtility.getWeatherByLongAndLat(mWeatherService, latitude, longitude).enqueue(mCallback);
+    }
+
+    public void initWeatherForecastPlace() {
+        if (place == null || mDate == null || isLoadingWeather) {
             return;
         }
         mTimer.cancel();
@@ -187,17 +211,10 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                if (latitude == 0.0 && longitude == 0.0) {
-                    initWeatherForecastPlace();
-                    return;
-                }
-                RetrofitUtility.getWeatherByLongAndLat(mWeatherService, latitude, longitude).enqueue(mCallback);
+                isLoadingWeather = true;
+                RetrofitUtility.getWeatherByPlaceName(mWeatherService, place).enqueue(mCallback);
             }
-        }, 500);
-    }
-
-    public void initWeatherForecastPlace() {
-        RetrofitUtility.getWeatherByPlaceName(mWeatherService, place).enqueue(mCallback);
+        }, 1000);
     }
 
     public void itineraryAfterTextChanged(Editable s) {
@@ -207,7 +224,9 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
 
     public void placeAfterTextChanged(Editable s) {
         Log.e("TextWatcherTest", "afterTextChanged:\t" + s.toString());
-        setPlace(s.toString());
+        latitude = 0.0;
+        longitude = 0.0;
+        setPlace(s.toString(), true);
 
     }
 
@@ -265,7 +284,10 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
         return place;
     }
 
-    public void setPlace(String place) {
+    public void setPlace(String place, boolean loadWeather) {
+        if (loadWeather) {
+            initWeatherForecastPlace();
+        }
         this.place = place;
         notifyChange();
     }
