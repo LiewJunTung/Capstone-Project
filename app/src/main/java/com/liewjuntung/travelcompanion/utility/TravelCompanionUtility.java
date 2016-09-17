@@ -3,16 +3,23 @@ package com.liewjuntung.travelcompanion.utility;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.support.annotation.WorkerThread;
 
+import com.liewjuntung.travelcompanion.models.Itinerary;
 import com.liewjuntung.travelcompanion.models.Trip;
 import com.liewjuntung.travelcompanion.providers.ItinerariesTableColumns;
 import com.liewjuntung.travelcompanion.providers.TravelCompanionProvider;
 import com.liewjuntung.travelcompanion.providers.TripsTableColumns;
 
+import org.threeten.bp.Duration;
 import org.threeten.bp.LocalDate;
+import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.Period;
+import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +59,8 @@ public class TravelCompanionUtility {
             ItinerariesTableColumns.LONGITUDE,
             ItinerariesTableColumns.WEATHER_CODE,
             ItinerariesTableColumns.HIGH_TEMP,
-            ItinerariesTableColumns.LOW_TEMP
+            ItinerariesTableColumns.LOW_TEMP,
+            ItinerariesTableColumns.NOTE
     };
 
     public static final int ITER_ID = 0;
@@ -65,6 +73,10 @@ public class TravelCompanionUtility {
     public static final int ITER_WEATHER_CODE = 7;
     public static final int ITER_HIGH_TEMP = 8;
     public static final int ITER_LOW_TEMP = 9;
+    public static final int ITER_NOTE = 10;
+
+    public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
+            = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 
     public static Uri insertTrip(Activity activity, String name, String country, String dateFrom,
@@ -86,9 +98,7 @@ public class TravelCompanionUtility {
                                       String place,
                                       double latitude,
                                       double longitude,
-                                      int weatherCode,
-                                      int highTemp,
-                                      int lowTemp
+                                      String nate
     ) {
         ContentValues values = new ContentValues();
         values.put(ItinerariesTableColumns.TRIP_ID, tripId);
@@ -97,10 +107,33 @@ public class TravelCompanionUtility {
         values.put(ItinerariesTableColumns.PLACE, place);
         values.put(ItinerariesTableColumns.LATITUDE, latitude);
         values.put(ItinerariesTableColumns.LONGITUDE, longitude);
-        values.put(ItinerariesTableColumns.WEATHER_CODE, weatherCode);
-        values.put(ItinerariesTableColumns.HIGH_TEMP, highTemp);
-        values.put(ItinerariesTableColumns.LOW_TEMP, lowTemp);
-        return activity.getContentResolver().insert(TravelCompanionProvider.Trips.TRIPS, values);
+
+        return activity.getContentResolver().insert(TravelCompanionProvider.Itineraries.ITINERARIES, values);
+    }
+
+    public static int updateItinerary(Activity activity,
+                                      int id,
+                                      int tripId,
+                                      String name,
+                                      String dateTime,
+                                      String place,
+                                      double latitude,
+                                      double longitude,
+                                      String nate
+    ) {
+        ContentValues values = new ContentValues();
+        values.put(ItinerariesTableColumns.TRIP_ID, tripId);
+        values.put(ItinerariesTableColumns.NAME, name);
+        values.put(ItinerariesTableColumns.DATE_TIME, dateTime);
+        values.put(ItinerariesTableColumns.PLACE, place);
+        values.put(ItinerariesTableColumns.LATITUDE, latitude);
+        values.put(ItinerariesTableColumns.LONGITUDE, longitude);
+
+        return activity.getContentResolver().update(
+                TravelCompanionProvider.Itineraries.ITINERARIES,
+                values,
+                ItinerariesTableColumns._ID + " = ?",
+                new String[]{"" + id});
     }
 
     public static List<Object> initMainList(@Nullable List<Trip> tripList) {
@@ -187,52 +220,95 @@ public class TravelCompanionUtility {
         return resultList;
     }
 
-   /* public static List<Object> initItineraryList(Cursor cursor) {
+    public static List<Object> initItineraryList(Cursor cursor) {
         if (cursor == null) {
             return new ArrayList<>();
         }
         List<Object> resultList = new ArrayList<>();
         boolean currentTitleSet = false;
         boolean upcomingTitleSet = false;
-        LocalDate currentDate = LocalDate.now();
+        String bufferDate = "";
+        LocalDateTime currentDateTime = LocalDateTime.now();
         int index = 0;
         while (cursor.moveToNext()) {
-            Itinerary itinerary = new Itinerary(
-                    cursor.getInt(ITER_ID),
-                    cursor.getInt(ITER_TRIP_ID),
-                    cursor.getString(ITER_NAME),
-                    cursor.getString(ITER_DATE_TIME),
-                    cursor.getString(ITER_PLACE),
-                    cursor.getDouble(ITER_LATITUDE),
-                    cursor.getDouble(ITER_LONGITUDE),
-                    cursor.getInt(ITER_WEATHER_CODE),
-                    cursor.getInt(ITER_HIGH_TEMP),
-                    cursor.getInt(ITER_LOW_TEMP)
-            );
-            LocalDateTime tripFromDate = LocalDateTime.parse(itinerary.getDateTime());
-            LocalDate tripToDate = LocalDate.parse(trip.getDateUntil());
-            Period fromPeriod = Period.between(currentDate, tripFromDate);
-            Period toPeriod = Period.between(currentDate, tripToDate);
-            if (tripFromDate.equals(currentDate) || fromPeriod.isNegative() && !toPeriod.isNegative()) {
+            Itinerary itinerary = Itinerary.create(cursor);
+            LocalDateTime tripToDate = LocalDateTime.parse(itinerary.getDateTime(), DEFAULT_DATE_TIME_FORMATTER);
+
+            Duration toPeriod = Duration.between(currentDateTime, tripToDate);
+            if (tripToDate.toLocalDate().equals(currentDateTime.toLocalDate())) {
                 if (!currentTitleSet) {
                     currentTitleSet = true;
-                    resultList.add(0, "Current");
+                    resultList.add(0, tripToDate.toLocalDate().toString());
                     index++;
                 }
-                trip.setFuture(false);
-
-            } else if (!fromPeriod.isNegative() && !toPeriod.isNegative()) {
-                if (!upcomingTitleSet) {
-                    upcomingTitleSet = true;
-                    resultList.add(index, "Upcoming");
+            } else if (!toPeriod.isNegative()) {
+                if (!bufferDate.equals(tripToDate.toLocalDate().toString())) {
+                    resultList.add(index, tripToDate.toLocalDate().toString());
                     index++;
                 }
-                trip.setFuture(true);
             }
-
+            bufferDate = tripToDate.toLocalDate().toString();
             index++;
-            resultList.add(trip);
+            resultList.add(itinerary);
         }
         return resultList;
-    }*/
+    }
+
+    public static List<Object> initItineraryListForTest(List<Itinerary> itineraries) {
+        List<Object> resultList = new ArrayList<>();
+        boolean currentTitleSet = false;
+        boolean upcomingTitleSet = false;
+        String bufferDate = "";
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        int index = 0;
+        for (Itinerary itinerary : itineraries) {
+            LocalDateTime itineraryToDateTime = LocalDateTime.parse(itinerary.getDateTime(), DEFAULT_DATE_TIME_FORMATTER);
+
+            Duration toPeriod = Duration.between(currentDateTime, itineraryToDateTime);
+            if (itineraryToDateTime.toLocalDate().equals(currentDateTime.toLocalDate())) {
+                if (!currentTitleSet) {
+                    currentTitleSet = true;
+                    resultList.add(0, itineraryToDateTime.toLocalDate().toString());
+                    index++;
+                }
+            } else if (!toPeriod.isNegative()) {
+                if (!bufferDate.equals(itineraryToDateTime.toLocalDate().toString())) {
+                    resultList.add(index, itineraryToDateTime.toLocalDate().toString());
+                    index++;
+                }
+            }
+            bufferDate = itineraryToDateTime.toLocalDate().toString();
+            index++;
+            resultList.add(itinerary);
+        }
+        return resultList;
+    }
+
+    @WorkerThread
+    public static boolean isDark(Bitmap bitmap) {
+        boolean dark = false;
+
+        float darkThreshold = bitmap.getWidth() * bitmap.getHeight() * 0.45f;
+        int darkPixels = 0;
+
+        int[] pixels = new int[bitmap.getWidth() * bitmap.getHeight()];
+        bitmap.getPixels(pixels, 0, bitmap.getWidth(), 0, 0, bitmap.getWidth(), bitmap.getHeight());
+
+        for (int pixel : pixels) {
+
+            int r = Color.red(pixel);
+            int g = Color.green(pixel);
+            int b = Color.blue(pixel);
+            double luminance = (0.299 * r + 0.0f + 0.587 * g + 0.0f + 0.114 * b + 0.0f);
+            if (luminance < 150) {
+                darkPixels++;
+            }
+        }
+
+        if (darkPixels >= darkThreshold) {
+            dark = true;
+        }
+        long duration = System.currentTimeMillis();
+        return dark;
+    }
 }

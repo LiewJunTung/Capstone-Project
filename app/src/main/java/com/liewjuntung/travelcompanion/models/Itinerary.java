@@ -1,10 +1,24 @@
 package com.liewjuntung.travelcompanion.models;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.format.DateTimeFormatter;
+
+import static com.liewjuntung.travelcompanion.utility.TravelCompanionUtility.ITER_DATE_TIME;
+import static com.liewjuntung.travelcompanion.utility.TravelCompanionUtility.ITER_HIGH_TEMP;
+import static com.liewjuntung.travelcompanion.utility.TravelCompanionUtility.ITER_ID;
+import static com.liewjuntung.travelcompanion.utility.TravelCompanionUtility.ITER_LATITUDE;
+import static com.liewjuntung.travelcompanion.utility.TravelCompanionUtility.ITER_LONGITUDE;
+import static com.liewjuntung.travelcompanion.utility.TravelCompanionUtility.ITER_LOW_TEMP;
+import static com.liewjuntung.travelcompanion.utility.TravelCompanionUtility.ITER_NAME;
+import static com.liewjuntung.travelcompanion.utility.TravelCompanionUtility.ITER_NOTE;
+import static com.liewjuntung.travelcompanion.utility.TravelCompanionUtility.ITER_PLACE;
+import static com.liewjuntung.travelcompanion.utility.TravelCompanionUtility.ITER_TRIP_ID;
+import static com.liewjuntung.travelcompanion.utility.TravelCompanionUtility.ITER_WEATHER_CODE;
 
 /**
  * Popular Movie App
@@ -12,7 +26,7 @@ import org.threeten.bp.format.DateTimeFormatter;
  */
 
 public class Itinerary implements Parcelable {
-    public static final Parcelable.Creator<Itinerary> CREATOR = new Parcelable.Creator<Itinerary>() {
+    public static final Creator<Itinerary> CREATOR = new Creator<Itinerary>() {
         @Override
         public Itinerary createFromParcel(Parcel source) {
             return new Itinerary(source);
@@ -28,6 +42,7 @@ public class Itinerary implements Parcelable {
     private String name;
     private String dateTime;
     private String place;
+    private String note;
     private double latitude;
     private double longitude;
     private int weatherCode;
@@ -37,7 +52,7 @@ public class Itinerary implements Parcelable {
     public Itinerary() {
     }
 
-    public Itinerary(int id, int tripId, String name, String dateTime, String place, double latitude, double longitude, int weatherCode, int highTemp, int lowTemp) {
+    public Itinerary(int id, int tripId, String name, String dateTime, String place, double latitude, double longitude, int weatherCode, int highTemp, int lowTemp, String note) {
         this.id = id;
         this.tripId = tripId;
         this.name = name;
@@ -48,6 +63,7 @@ public class Itinerary implements Parcelable {
         this.weatherCode = weatherCode;
         this.highTemp = highTemp;
         this.lowTemp = lowTemp;
+        this.note = note;
     }
 
     protected Itinerary(Parcel in) {
@@ -56,6 +72,7 @@ public class Itinerary implements Parcelable {
         this.name = in.readString();
         this.dateTime = in.readString();
         this.place = in.readString();
+        this.note = in.readString();
         this.latitude = in.readDouble();
         this.longitude = in.readDouble();
         this.weatherCode = in.readInt();
@@ -63,12 +80,52 @@ public class Itinerary implements Parcelable {
         this.lowTemp = in.readInt();
     }
 
+    public static Itinerary create(@NonNull Cursor cursor) {
+        return new Itinerary(
+                cursor.getInt(ITER_ID),
+                cursor.getInt(ITER_TRIP_ID),
+                cursor.getString(ITER_NAME),
+                cursor.getString(ITER_DATE_TIME),
+                cursor.getString(ITER_PLACE),
+                cursor.getDouble(ITER_LATITUDE),
+                cursor.getDouble(ITER_LONGITUDE),
+                cursor.getInt(ITER_WEATHER_CODE),
+                cursor.getInt(ITER_HIGH_TEMP),
+                cursor.getInt(ITER_LOW_TEMP),
+                cursor.getString(ITER_NOTE)
+        );
+    }
+
     public String getDisplayTime(){
         if (dateTime == null){
             return null;
         }
         LocalDateTime localDateTime = LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        return localDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm aa"));
+        return localDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm a"));
+    }
+
+    public String getLocalTimeString() {
+        if (dateTime == null) {
+            return null;
+        }
+        LocalDateTime localDateTime = LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        return localDateTime.toLocalTime().toString();
+    }
+
+    public String getDisplayDate() {
+        if (dateTime == null) {
+            return null;
+        }
+        LocalDateTime localDateTime = LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        return localDateTime.toLocalDate().toString();
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public int getId() {
@@ -112,6 +169,23 @@ public class Itinerary implements Parcelable {
     }
 
     @Override
+    public String toString() {
+        return "Itinerary{" +
+                "id=" + id +
+                ", tripId=" + tripId +
+                ", name='" + name + '\'' +
+                ", dateTime='" + dateTime + '\'' +
+                ", place='" + place + '\'' +
+                ", note='" + note + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", weatherCode=" + weatherCode +
+                ", highTemp=" + highTemp +
+                ", lowTemp=" + lowTemp +
+                '}';
+    }
+
+    @Override
     public int describeContents() {
         return 0;
     }
@@ -123,6 +197,7 @@ public class Itinerary implements Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.dateTime);
         dest.writeString(this.place);
+        dest.writeString(this.note);
         dest.writeDouble(this.latitude);
         dest.writeDouble(this.longitude);
         dest.writeInt(this.weatherCode);

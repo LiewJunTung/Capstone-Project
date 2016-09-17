@@ -69,11 +69,21 @@ public class RetrofitUtility {
     public static Call<YahooQueryResult> getWeatherByLongAndLat(WeatherService service, double longitude, double latitude) {
         String query;
 
-            query = String.format(Locale.getDefault(),
-                            "select * from weather.forecast where woeid in (SELECT woeid FROM geo.places WHERE text=\"(%s,%s)\")",
-                            longitude,
-                            latitude);
+        query = String.format(Locale.getDefault(),
+                "select * from weather.forecast where woeid in (SELECT woeid FROM geo.places WHERE text=\"(%s,%s)\")",
+                longitude,
+                latitude);
 
+
+        return service.yahooQuery(query);
+    }
+
+    public static Call<YahooQueryResult> getWeatherByPlaceName(WeatherService service, String place) {
+        String query;
+
+        query = String.format(Locale.getDefault(),
+                "select * from weather.forecast where woeid in (SELECT woeid FROM geo.places(1) WHERE text=\"%s\")",
+                place);
 
         return service.yahooQuery(query);
     }

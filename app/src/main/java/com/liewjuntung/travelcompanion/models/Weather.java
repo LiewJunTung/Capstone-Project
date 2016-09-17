@@ -31,7 +31,7 @@ public class Weather implements Parcelable {
      */
 
     @SerializedName("code")
-    private String code;
+    private int code;
     @SerializedName("date")
     private String date;
     @SerializedName("day")
@@ -47,7 +47,7 @@ public class Weather implements Parcelable {
     }
 
     protected Weather(Parcel in) {
-        this.code = in.readString();
+        this.code = in.readInt();
         this.date = in.readString();
         this.day = in.readString();
         this.high = in.readInt();
@@ -55,7 +55,7 @@ public class Weather implements Parcelable {
         this.text = in.readString();
     }
 
-    public String getCode() {
+    public int getCode() {
         return code;
     }
 
@@ -86,7 +86,7 @@ public class Weather implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.code);
+        dest.writeInt(this.code);
         dest.writeString(this.date);
         dest.writeString(this.day);
         dest.writeInt(this.high);

@@ -26,7 +26,7 @@ import static org.junit.Assert.assertNull;
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
-public class WeatherUnitTest {
+public class WeatherPlaceUnitTest {
 
     private YahooQueryResult mQueryResult;
     private WeatherService mWeatherService;
@@ -34,10 +34,9 @@ public class WeatherUnitTest {
 
     @Before
     public void setUp() {
-        double longitude = 39.9042;
-        double latitude = 116.4074;
+        String placeName = "New York";
         mWeatherService = RetrofitUtility.initWeatherService();
-        Call<YahooQueryResult> query = RetrofitUtility.getWeatherByLongAndLat(mWeatherService, longitude, latitude);
+        Call<YahooQueryResult> query = RetrofitUtility.getWeatherByPlaceName(mWeatherService, placeName);
 
         try {
             mQueryResult = query.execute().body();

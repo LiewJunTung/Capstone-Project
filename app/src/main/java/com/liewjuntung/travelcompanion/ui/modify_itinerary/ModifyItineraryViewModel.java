@@ -1,4 +1,4 @@
-package com.liewjuntung.travelcompanion.ui.create_itinerary;
+package com.liewjuntung.travelcompanion.ui.modify_itinerary;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -12,10 +12,7 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
-import com.liewjuntung.travelcompanion.models.Weather;
-import com.liewjuntung.travelcompanion.models.yahoo.YahooQueryResult;
-import com.liewjuntung.travelcompanion.networks.RetrofitUtility;
-import com.liewjuntung.travelcompanion.networks.WeatherService;
+import com.liewjuntung.travelcompanion.models.Itinerary;
 import com.liewjuntung.travelcompanion.utility.TravelCompanionUtility;
 
 import org.threeten.bp.LocalDate;
@@ -24,35 +21,26 @@ import org.threeten.bp.LocalTime;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.format.DateTimeFormatter;
 
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-
-import static android.content.ContentValues.TAG;
-
 /**
  * Popular Movie App
  * Created by jtlie on 9/17/2016.
  */
 
-public class CreateItineraryViewModel extends BaseObservable implements Parcelable {
-    public static final Parcelable.Creator<CreateItineraryViewModel> CREATOR = new Parcelable.Creator<CreateItineraryViewModel>() {
+public class ModifyItineraryViewModel extends BaseObservable implements Parcelable {
+    public static final Creator<ModifyItineraryViewModel> CREATOR = new Creator<ModifyItineraryViewModel>() {
         @Override
-        public CreateItineraryViewModel createFromParcel(Parcel source) {
-            return new CreateItineraryViewModel(source);
+        public ModifyItineraryViewModel createFromParcel(Parcel source) {
+            return new ModifyItineraryViewModel(source);
         }
 
         @Override
-        public CreateItineraryViewModel[] newArray(int size) {
-            return new CreateItineraryViewModel[size];
+        public ModifyItineraryViewModel[] newArray(int size) {
+            return new ModifyItineraryViewModel[size];
         }
     };
-    private final WeatherService mWeatherService = RetrofitUtility.initWeatherService();
-    CreateItineraryActivity mActivity;
+    ModifyItineraryActivity mActivity;
+    int weatherCode;
+    private int id;
     private int tripId;
     private String name;
     private String mDate;
@@ -63,42 +51,24 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
     private double longitude;
     private double latitude;
     private String note;
-    private int weatherCode;
-    private int tempHigh;
-    private int tempLow;
-    private boolean hasWeatherForecast = false;
-    private final Callback<YahooQueryResult> mCallback = new Callback<YahooQueryResult>() {
-        @Override
-        public void onResponse(Call<YahooQueryResult> call, Response<YahooQueryResult> response) {
-            if (response.isSuccessful() && response.body().getQuery().getCount() > 0) {
-                List<Weather> weatherList = response.body().getQuery().getResult().getChannel().getItem().getWeatherList();
 
-                for (Weather weather : weatherList) {
-                    if (LocalDate.parse(weather.getDate(),
-                            DateTimeFormatter.ofPattern("dd MMM yyyy")).equals(LocalDate.parse(mDate))) {
-                        setWeather(weather);
-                        break;
-                    }
-                }
-
-            }
-        }
-
-        @Override
-        public void onFailure(Call<YahooQueryResult> call, Throwable t) {
-            Log.d(TAG, "onFailure: " + t.getMessage(), t);
-        }
-    };
-    private Timer mTimer = new Timer();
-
-    public CreateItineraryViewModel(CreateItineraryActivity activity, int tripId, String tripStartDate, String tripEndDate) {
+    public ModifyItineraryViewModel(ModifyItineraryActivity activity, Itinerary itinerary, String tripStartDate, String tripEndDate) {
         mActivity = activity;
-        this.tripId = tripId;
+        this.id = itinerary.getId();
+        this.tripId = itinerary.getTripId();
+        this.name = itinerary.getName();
+        mDate = itinerary.getDisplayDate();
+        this.time = itinerary.getLocalTimeString();
+        this.place = itinerary.getPlace();
         this.tripStartDate = tripStartDate;
         this.tripEndDate = tripEndDate;
+        this.longitude = itinerary.getLongitude();
+        this.latitude = itinerary.getLatitude();
+        this.note = itinerary.getNote();
+        this.weatherCode = itinerary.getWeatherCode();
     }
 
-    protected CreateItineraryViewModel(Parcel in) {
+    protected ModifyItineraryViewModel(Parcel in) {
         this.tripId = in.readInt();
         this.name = in.readString();
         this.mDate = in.readString();
@@ -112,34 +82,10 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
         this.weatherCode = in.readInt();
     }
 
-    public void setActivity(CreateItineraryActivity activity) {
+    public void setActivity(ModifyItineraryActivity activity) {
         if (mActivity == null) {
             mActivity = activity;
         }
-    }
-
-    public void setWeather(Weather weather) {
-        hasWeatherForecast = true;
-        weatherCode = weather.getCode();
-        tempHigh = weather.getHigh();
-        tempLow = weather.getLow();
-        notifyChange();
-    }
-
-    public int getWeatherCode() {
-        return weatherCode;
-    }
-
-    public int getTempHigh() {
-        return tempHigh;
-    }
-
-    public int getTempLow() {
-        return tempLow;
-    }
-
-    public boolean isHasWeatherForecast() {
-        return hasWeatherForecast;
     }
 
     public void clickDateDialog(View view) {
@@ -177,29 +123,6 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
         dialog.show();
     }
 
-    //delay 500 milliseconds as soon as aftertextlistener fired
-    public void initWeatherForecastLatLong() {
-        if (place == null || mDate == null) {
-            return;
-        }
-        mTimer.cancel();
-        mTimer = new Timer();
-        mTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if (latitude == 0.0 && longitude == 0.0) {
-                    initWeatherForecastPlace();
-                    return;
-                }
-                RetrofitUtility.getWeatherByLongAndLat(mWeatherService, latitude, longitude).enqueue(mCallback);
-            }
-        }, 500);
-    }
-
-    public void initWeatherForecastPlace() {
-        RetrofitUtility.getWeatherByPlaceName(mWeatherService, place).enqueue(mCallback);
-    }
-
     public void itineraryAfterTextChanged(Editable s) {
         Log.e("TextWatcherTest", "afterTextChanged:\t" + s.toString());
         setName(s.toString());
@@ -208,7 +131,6 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
     public void placeAfterTextChanged(Editable s) {
         Log.e("TextWatcherTest", "afterTextChanged:\t" + s.toString());
         setPlace(s.toString());
-
     }
 
     public void noteAfterTextChanged(Editable s) {
@@ -218,7 +140,7 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
 
     public void saveData(View view) {
         String dateTime = mDate + " " + time;
-        TravelCompanionUtility.insertItinerary(mActivity,
+        TravelCompanionUtility.updateItinerary(mActivity, id,
                 tripId, name, dateTime, place, latitude, longitude, note);
         mActivity.setResult(Activity.RESULT_OK);
         mActivity.finish();
