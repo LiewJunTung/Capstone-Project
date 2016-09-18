@@ -217,6 +217,8 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
         if (place == null || mDate == null || isLoadingWeather) {
             return;
         }
+        latitude = 0.0;
+        longitude = 0.0;
         mTimer.cancel();
         mTimer = new Timer();
         mTimer.schedule(new TimerTask() {
@@ -235,8 +237,6 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
 
     public void placeAfterTextChanged(Editable s) {
         Log.e("TextWatcherTest", "afterTextChanged:\t" + s.toString());
-        latitude = 0.0;
-        longitude = 0.0;
         setPlace(s.toString(), true);
 
     }
@@ -296,10 +296,10 @@ public class CreateItineraryViewModel extends BaseObservable implements Parcelab
     }
 
     public void setPlace(String place, boolean loadWeather) {
+        this.place = place;
         if (loadWeather) {
             initWeatherForecastPlace();
         }
-        this.place = place;
         notifyChange();
     }
 

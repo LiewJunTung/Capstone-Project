@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.databinding.BaseObservable;
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
@@ -33,7 +35,18 @@ import retrofit2.Response;
  * Created by jtlie on 9/16/2016.
  */
 
-public class CreateTripViewModel extends BaseObservable {
+public class CreateTripViewModel extends BaseObservable implements Parcelable {
+    public static final Parcelable.Creator<CreateTripViewModel> CREATOR = new Parcelable.Creator<CreateTripViewModel>() {
+        @Override
+        public CreateTripViewModel createFromParcel(Parcel source) {
+            return new CreateTripViewModel(source);
+        }
+
+        @Override
+        public CreateTripViewModel[] newArray(int size) {
+            return new CreateTripViewModel[size];
+        }
+    };
     private static final String LOG_TAG = CreateTripViewModel.class.getSimpleName();
     CreateTripActivity mActivity;
     private String name;
@@ -49,6 +62,17 @@ public class CreateTripViewModel extends BaseObservable {
         mActivity = activity;
         flag = R.drawable.ic_flag_black_24dp;
         dateFromIsSet = false;
+    }
+
+    protected CreateTripViewModel(Parcel in) {
+        this.dateFrom = in.readString();
+        this.dateFromIsSet = in.readByte() != 0;
+        this.dateUntil = in.readString();
+        this.country = in.readString();
+        this.name = in.readString();
+        this.place = in.readString();
+        this.image = in.readString();
+        this.flag = in.readInt();
     }
 
     public void clickCountryDialog(View view) {
@@ -205,5 +229,20 @@ public class CreateTripViewModel extends BaseObservable {
         notifyChange();
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.dateFrom);
+        dest.writeByte(this.dateFromIsSet ? (byte) 1 : (byte) 0);
+        dest.writeString(this.dateUntil);
+        dest.writeString(this.country);
+        dest.writeString(this.name);
+        dest.writeString(this.place);
+        dest.writeString(this.image);
+        dest.writeInt(this.flag);
+    }
 }

@@ -248,6 +248,56 @@
                     tools:text="2000"
                     />
 
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginEnd="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginStart="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/ic_latitude_512"
+                    android:contentDescription="@string/text_comments"
+
+                    app:layout_columnSpan="1"
+                    />
+
+                <TextView
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center_vertical"
+                    android:hint="@string/not_available"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="5dp"
+                    app:layout_columnSpan="2"
+                    app:layout_columnWeight="2"
+                    app:loadLatLong="@{itinerary.latitude}"
+                    tools:text="2000"
+                    />
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginEnd="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginStart="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/ic_longitude_512"
+                    android:contentDescription="@string/text_comments"
+
+                    app:layout_columnSpan="1"
+                    />
+
+                <TextView
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="center_vertical"
+                    android:hint="@string/not_available"
+                    android:paddingEnd="5dp"
+                    android:paddingStart="5dp"
+                    app:layout_columnSpan="2"
+                    app:layout_columnWeight="2"
+                    app:loadLatLong="@{itinerary.longitude}"
+                    tools:text="2000"
+                    />
+
                 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
                           android:id="@+id/map"
                           android:name="com.google.android.gms.maps.MapFragment"

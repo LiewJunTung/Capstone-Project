@@ -51,4 +51,9 @@ public class CustomBindingAdapter {
     public static void loadWeatherTemp(TextView textView, int temperature) {
         textView.setText(textView.getContext().getString(R.string.format_temperature, temperature));
     }
+
+    @BindingAdapter("bind:loadLatLong")
+    public static void loadLatLong(TextView textView, double latLong) {
+        textView.setText(Double.toString(latLong));
+    }
 }

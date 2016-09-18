@@ -2,13 +2,17 @@ package com.liewjuntung.travelcompanion.utility;
 
 import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.annotation.WorkerThread;
 
+import com.liewjuntung.travelcompanion.R;
 import com.liewjuntung.travelcompanion.models.Itinerary;
 import com.liewjuntung.travelcompanion.models.Trip;
 import com.liewjuntung.travelcompanion.providers.ItinerariesTableColumns;
@@ -77,6 +81,7 @@ public class TravelCompanionUtility {
 
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER
             = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final String SHOW_ADS_TIMES = "times_ads_shown";
 
 
     public static Uri insertTrip(Activity activity, String name, String country, String dateFrom,
@@ -300,6 +305,22 @@ public class TravelCompanionUtility {
         return resultList;
     }
 
+    /**
+     * if user created itinerary for about 3 times, show ads
+     */
+    public static boolean showInterstitial(Context context) {
+        int times = PreferenceManager.getDefaultSharedPreferences(context)
+                .getInt(SHOW_ADS_TIMES, 0);
+        PreferenceManager.getDefaultSharedPreferences(context).edit()
+                .putInt(SHOW_ADS_TIMES, times + 1).apply();
+        return times % 2 == 0;
+    }
+
+    /**
+     * Check image is dark
+     * http://stackoverflow.com/questions/22731653/android-real-time-black-white-threshold-image
+     */
+
     @WorkerThread
     public static boolean isDark(Bitmap bitmap) {
         boolean dark = false;
@@ -326,5 +347,20 @@ public class TravelCompanionUtility {
         }
         long duration = System.currentTimeMillis();
         return dark;
+    }
+
+    /**
+     * https://mzgreen.github.io/2015/06/23/How-to-hideshow-Toolbar-when-list-is-scrolling(part3)/
+     *
+     * @param context
+     * @return
+     */
+    public static int getToolbarHeight(Context context) {
+        final TypedArray styledAttributes = context.getTheme().obtainStyledAttributes(
+                new int[]{R.attr.actionBarSize});
+        int toolbarHeight = (int) styledAttributes.getDimension(0, 0);
+        styledAttributes.recycle();
+
+        return toolbarHeight;
     }
 }

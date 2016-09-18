@@ -30,9 +30,11 @@ public class ItineraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     int[] titleIndex;
 
     ItineraryClickListener mItineraryClickListener;
+    View emptyView;
 
-    public ItineraryAdapter(Cursor cursor) {
+    public ItineraryAdapter(Cursor cursor, View emptyView) {
         setMainListCursor(cursor);
+        this.emptyView = emptyView;
     }
 
 
@@ -90,7 +92,15 @@ public class ItineraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemCount() {
-        return mainList.size();
+        int size = mainList.size();
+        if (emptyView != null) {
+            if (size > 0) {
+                emptyView.setVisibility(View.GONE);
+            } else {
+                emptyView.setVisibility(View.VISIBLE);
+            }
+        }
+        return size;
     }
 
     private class TextViewHolder extends RecyclerView.ViewHolder {

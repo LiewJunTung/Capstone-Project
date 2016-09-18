@@ -330,10 +330,10 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
     }
 
     public void setPlace(String place, boolean loadWeather) {
+        this.place = place;
         if (loadWeather) {
             initWeatherForecastPlace();
         }
-        this.place = place;
         notifyChange();
     }
 

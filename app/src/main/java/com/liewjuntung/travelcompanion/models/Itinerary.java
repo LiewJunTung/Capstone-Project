@@ -81,6 +81,12 @@ public class Itinerary implements Parcelable {
     }
 
     public static Itinerary create(@NonNull Cursor cursor) {
+        int weatherCode = -1;
+        if (cursor.isNull(ITER_WEATHER_CODE)) {
+            weatherCode = -1;
+        } else {
+            weatherCode = cursor.getInt(ITER_WEATHER_CODE);
+        }
         return new Itinerary(
                 cursor.getInt(ITER_ID),
                 cursor.getInt(ITER_TRIP_ID),
@@ -89,7 +95,7 @@ public class Itinerary implements Parcelable {
                 cursor.getString(ITER_PLACE),
                 cursor.getDouble(ITER_LATITUDE),
                 cursor.getDouble(ITER_LONGITUDE),
-                cursor.getInt(ITER_WEATHER_CODE),
+                weatherCode,
                 cursor.getInt(ITER_HIGH_TEMP),
                 cursor.getInt(ITER_LOW_TEMP),
                 cursor.getString(ITER_NOTE)

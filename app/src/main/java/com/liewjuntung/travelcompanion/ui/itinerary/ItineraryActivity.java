@@ -77,7 +77,7 @@ public class ItineraryActivity extends AppCompatActivity
 
     private void initToolbar() {
         setSupportActionBar(mBinding.toolbar.toolbar);
-        if (getSupportActionBar() != null) {
+        if (getSupportActionBar() != null && mItinerary != null) {
             getSupportActionBar().setTitle(mItinerary.getName());
             getSupportActionBar().setSubtitle(mItinerary.getDateTime());
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -110,20 +110,26 @@ public class ItineraryActivity extends AppCompatActivity
 
     @Override
     public void onStreetViewPanoramaReady(StreetViewPanorama panorama) {
-        mPanorama = panorama;
-        mPanorama.setPosition(new LatLng(mItinerary.getLatitude(), mItinerary.getLongitude()));
-        panorama.setPanningGesturesEnabled(true);
-        panorama.setUserNavigationEnabled(true);
-        panorama.setStreetNamesEnabled(true);
+        if (mItinerary != null) {
+            mPanorama = panorama;
+            mPanorama.setPosition(new LatLng(mItinerary.getLatitude(), mItinerary.getLongitude()));
+            panorama.setPanningGesturesEnabled(true);
+            panorama.setUserNavigationEnabled(true);
+            panorama.setStreetNamesEnabled(true);
+        }
+
     }
 
     @Override
     public void onMapReady(GoogleMap map) {
-        LatLng latLng = new LatLng(mItinerary.getLatitude(), mItinerary.getLongitude());
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
-        map.addMarker(new MarkerOptions()
-                .position(latLng)
-                .title(mItinerary.getPlace()));
+        if (mItinerary != null) {
+            LatLng latLng = new LatLng(mItinerary.getLatitude(), mItinerary.getLongitude());
+            map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 13));
+            map.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(mItinerary.getPlace()));
+        }
+
     }
 
     @Override

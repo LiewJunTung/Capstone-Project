@@ -9,15 +9,33 @@ import com.liewjuntung.travelcompanion.R;
 import com.liewjuntung.travelcompanion.databinding.ActivityCreateTripBinding;
 
 public class CreateTripActivity extends AppCompatActivity {
+    private static final String CREATE_TRIP_VIEWMODEL_INSTANCE = "CREATE_TRIP_VIEWMODEL_INSTANCE";
     ActivityCreateTripBinding mBinding;
+
+    CreateTripViewModel mViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_create_trip);
-        mBinding.setVm(new CreateTripViewModel(this));
-        initToolbar();
 
+        initToolbar();
+        if (savedInstanceState == null) {
+            mViewModel = new CreateTripViewModel(this);
+        } else {
+            mViewModel = savedInstanceState.getParcelable(CREATE_TRIP_VIEWMODEL_INSTANCE);
+            if (mViewModel == null) {
+                mViewModel = new CreateTripViewModel(this);
+            }
+        }
+        mBinding.setVm(mViewModel);
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putParcelable(CREATE_TRIP_VIEWMODEL_INSTANCE, mViewModel);
+        super.onSaveInstanceState(outState);
     }
 
     private void initToolbar() {

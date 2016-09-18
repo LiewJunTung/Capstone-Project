@@ -17,10 +17,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.liewjuntung.travelcompanion.BuildConfig;
 import com.liewjuntung.travelcompanion.R;
 import com.liewjuntung.travelcompanion.databinding.ActivityTripBinding;
 import com.liewjuntung.travelcompanion.models.Itinerary;
 import com.liewjuntung.travelcompanion.models.Trip;
+import com.liewjuntung.travelcompanion.providers.ItinerariesTableColumns;
 import com.liewjuntung.travelcompanion.providers.TravelCompanionProvider;
 import com.liewjuntung.travelcompanion.ui.create_itinerary.CreateItineraryActivity;
 import com.liewjuntung.travelcompanion.ui.itinerary.ItineraryActivity;
@@ -35,8 +39,8 @@ public class TripActivity extends AppCompatActivity implements LoaderManager.Loa
     private static final int ITINERARY_LIST_LOADER = 1;
     ItineraryAdapter mItineraryAdapter;
     ActivityTripBinding mBinding;
+    InterstitialAd mInterstitialAd;
     private Trip mTrip;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,8 @@ public class TripActivity extends AppCompatActivity implements LoaderManager.Loa
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_trip);
         mBinding.setTrip(mTrip);
         initToolbar();
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(BuildConfig.ADS_INTERSTITIAL_ID);
         mBinding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,13 +59,32 @@ public class TripActivity extends AppCompatActivity implements LoaderManager.Loa
                 intent1.putExtra(CreateItineraryActivity.TRIP_DATE_ID, mTrip.getId());
                 intent1.putExtra(CreateItineraryActivity.TRIP_DATE_FROM, mTrip.getDateFrom());
                 intent1.putExtra(CreateItineraryActivity.TRIP_DATE_UNTIL, mTrip.getDateUntil());
-                startActivity(intent1);
+                startActivityForResult(intent1, CreateItineraryActivity.CREATE_ITINERARY_ACTIVITY_REQUEST);
 //                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
         });
         initRecyclerView();
         getSupportLoaderManager().initLoader(ITINERARY_LIST_LOADER, null, this);
+        requestNewInterstitial();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CreateItineraryActivity.CREATE_ITINERARY_ACTIVITY_REQUEST) {
+            boolean showInterstitial = TravelCompanionUtility.showInterstitial(this);
+            if (mInterstitialAd.isLoaded() && showInterstitial) {
+                mInterstitialAd.show();
+            }
+        }
+    }
+
+    private void requestNewInterstitial() {
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .build();
+
+        mInterstitialAd.loadAd(adRequest);
     }
 
     @Override
@@ -80,7 +105,7 @@ public class TripActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void initRecyclerView() {
-        mItineraryAdapter = new ItineraryAdapter(null);
+        mItineraryAdapter = new ItineraryAdapter(null, mBinding.content.emptyView);
         mItineraryAdapter.setItineraryClickListener(new ItineraryClickListener() {
             @Override
             public void clickItinerary(Itinerary itinerary) {
@@ -136,7 +161,7 @@ public class TripActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(this, TravelCompanionProvider.Itineraries.ITINERARIES,
-                TravelCompanionUtility.ITINERARY_COLUMNS, null, null, null);
+                TravelCompanionUtility.ITINERARY_COLUMNS, ItinerariesTableColumns.TRIP_ID + "= ?", new String[]{Integer.toString(mTrip.getId())}, null);
     }
 
     @Override

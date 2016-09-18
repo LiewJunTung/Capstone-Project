@@ -32,6 +32,7 @@ public class CreateItineraryActivity
     public static final String TRIP_DATE_FROM = "trip_date_from";
     public static final String TRIP_DATE_UNTIL = "trip_date_until";
     public static final int PLACE_PICKER_REQUEST = 1;
+    public static final int CREATE_ITINERARY_ACTIVITY_REQUEST = 300;
 
     private static final String BUNDLE_VIEWMODEL = "itinerary_view_model";
     private static final int GET_FINE_LOCATION_PERMISSION = 100;
