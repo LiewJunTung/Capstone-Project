@@ -36,6 +36,7 @@ public class CustomBindingAdapter {
         if (weatherCode < 0 && weatherCode > 47) {
             return;
         }
+        imageView.setContentDescription(WeatherUtility.getWeatherStringFromCode(imageView.getContext(), weatherCode));
         imageView.setImageResource(WeatherUtility.getWeatherDrawables(weatherCode));
     }
 

@@ -13,4 +13,5 @@
 
     <color name="black">#000</color>
     <color name="half_black">#00000000</color>
+    <color name="opaque_black">#62000000</color>
 </resources>

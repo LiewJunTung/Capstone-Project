@@ -1,8 +1,10 @@
-package com.liewjuntung.travelcompanion.ui.main;
+package com.liewjuntung.travelcompanion.widget;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -16,19 +18,22 @@ import android.view.View;
 import com.liewjuntung.travelcompanion.R;
 import com.liewjuntung.travelcompanion.models.Trip;
 import com.liewjuntung.travelcompanion.providers.TravelCompanionProvider;
-import com.liewjuntung.travelcompanion.service.TravelCompanionSyncAdapter;
 import com.liewjuntung.travelcompanion.ui.create_trip.CreateTripActivity;
-import com.liewjuntung.travelcompanion.ui.trip.TripActivity;
+import com.liewjuntung.travelcompanion.ui.main.MainAdapter;
+import com.liewjuntung.travelcompanion.ui.main.TripClickListener;
 import com.liewjuntung.travelcompanion.utility.TravelCompanionUtility;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+import static android.appwidget.AppWidgetManager.ACTION_APPWIDGET_UPDATE;
 
+public class WidgetConfigActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private static final int TRIP_LIST_LOADER = 0;
     MainAdapter mMainAdapter;
-
+    private int mAppWidgetId = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //so that it won't set on screen when user press back button
+        setResult(RESULT_CANCELED);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -36,15 +41,28 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 
-        initRecyclerView();
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, CreateTripActivity.class));
+                startActivity(new Intent(WidgetConfigActivity.this, CreateTripActivity.class));
             }
         });
+        initRecyclerView();
         getSupportLoaderManager().initLoader(TRIP_LIST_LOADER, null, this);
-        TravelCompanionSyncAdapter.syncImmediately(this);
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+        if (extras != null) {
+            mAppWidgetId = extras.getInt(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
+        }
+
+        // If this activity was started with an intent without an app widget ID,
+        // finish with an error.
+        if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            finish();
+        }
+
+
     }
 
     @Override
@@ -61,12 +79,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mMainAdapter.setTripClickListener(new TripClickListener() {
             @Override
             public void clickTrip(View view, Trip trip) {
-                Intent intent = new Intent(MainActivity.this, TripActivity.class);
-                intent.putExtra(TripActivity.TRIP_INTENT, trip);
-//                ActivityOptions options = ActivityOptions
-//                        .makeSceneTransitionAnimation(MainActivity.this, view, getString(R.string.trans_main));
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+
+                Intent intent = new Intent(ACTION_APPWIDGET_UPDATE, null,
+                        WidgetConfigActivity.this, TravelCompanionWidgetProvider.class);
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{mAppWidgetId});
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+                intent.putExtra(TravelCompanionWidgetRemoteViewService.TRIP_ID, trip.getId());
+                PreferenceManager.getDefaultSharedPreferences(WidgetConfigActivity.this)
+                        .edit()
+                        .putInt(getString(R.string.widget_trip_pref_name, mAppWidgetId), trip.getId())
+                        .apply();
+                sendBroadcast(intent);
+                setResult(RESULT_OK, intent);
+                finish();
             }
         });
     }
@@ -82,9 +107,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mMainAdapter.setMainListCursor(data);
     }
 
+
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         mMainAdapter.setMainListCursor(null);
     }
-
 }

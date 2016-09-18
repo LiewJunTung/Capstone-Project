@@ -45,11 +45,13 @@ public class TripActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        postponeEnterTransition();
         Intent intent = getIntent();
         mTrip = intent.getParcelableExtra(TRIP_INTENT);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_trip);
         mBinding.setTrip(mTrip);
         initToolbar();
+        startPostponedEnterTransition();
         mInterstitialAd = new InterstitialAd(this);
         mInterstitialAd.setAdUnitId(BuildConfig.ADS_INTERSTITIAL_ID);
         mBinding.fab.setOnClickListener(new View.OnClickListener() {
@@ -67,6 +69,7 @@ public class TripActivity extends AppCompatActivity implements LoaderManager.Loa
         initRecyclerView();
         getSupportLoaderManager().initLoader(ITINERARY_LIST_LOADER, null, this);
         requestNewInterstitial();
+
     }
 
     @Override
@@ -96,6 +99,11 @@ public class TripActivity extends AppCompatActivity implements LoaderManager.Loa
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     @Override

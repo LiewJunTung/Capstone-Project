@@ -1,5 +1,6 @@
 package com.liewjuntung.travelcompanion.ui.main;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
@@ -35,7 +36,10 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     View emptyView;
 
-    public MainAdapter(Cursor cursor, View emptyView) {
+    Context mContext;
+
+    public MainAdapter(Context context, Cursor cursor, View emptyView) {
+        mContext = context;
         setMainListCursor(cursor);
         this.emptyView = emptyView;
     }
@@ -77,33 +81,35 @@ public class MainAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    private void clickTrip(Trip trip){
+    private void clickTrip(View view, Trip trip) {
         if (mTripClickListener != null){
-            mTripClickListener.clickTrip(trip);
+            mTripClickListener.clickTrip(view, trip);
         }
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof TextViewHolder) {
             ((TextViewHolder) holder).binding.setTitle((String) mainList.get(position));
         } else if (holder instanceof UpcomingItemViewHolder) {
 
-            ((UpcomingItemViewHolder) holder).binding.setTrip((Trip) mainList.get(position));
-            final Trip trip = ((UpcomingItemViewHolder) holder).binding.getTrip();
+            final Trip trip = (Trip) mainList.get(position);
+            ((UpcomingItemViewHolder) holder).binding.setTrip(trip);
+            ((UpcomingItemViewHolder) holder).binding.tripItem.setContentDescription(mContext.getString(R.string.trip_to_cd, trip.getName()));
             ((UpcomingItemViewHolder) holder).binding.getRoot().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    clickTrip(trip);
+                    clickTrip(((UpcomingItemViewHolder) holder).binding.tripImage, trip);
                 }
             });
         } else {
-            ((CurrentItemViewHolder) holder).binding.setTrip((Trip) mainList.get(position));
-            final Trip trip = ((CurrentItemViewHolder) holder).binding.getTrip();
+            final Trip trip = (Trip) mainList.get(position);
+            ((CurrentItemViewHolder) holder).binding.setTrip(trip);
+            ((CurrentItemViewHolder) holder).binding.tripItem.setContentDescription(mContext.getString(R.string.trip_to_cd, trip.getName()));
             ((CurrentItemViewHolder) holder).binding.getRoot().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    clickTrip(trip);
+                    clickTrip(((CurrentItemViewHolder) holder).binding.tripImage, trip);
                 }
             });
         }

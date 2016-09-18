@@ -1,5 +1,7 @@
 package com.liewjuntung.travelcompanion.ui.main;
 
+import android.view.View;
+
 import com.liewjuntung.travelcompanion.models.Trip;
 
 /**
@@ -8,5 +10,5 @@ import com.liewjuntung.travelcompanion.models.Trip;
  */
 
 public interface TripClickListener {
-    void clickTrip(Trip trip);
+    void clickTrip(View view, Trip trip);
 }

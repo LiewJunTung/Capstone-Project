@@ -24,11 +24,15 @@
             android:padding="@dimen/activity_horizontal_margin">
 
             <ImageView
+                android:id="@+id/trip_image"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
+                android:contentDescription="@string/text_trip_image"
+                android:transitionName="@string/trans_main"
                 app:imageUrl="@{trip.image}"
-                tools:background="@color/primary_light" />
+                tools:background="@color/primary_light"
+                />
 
             <LinearLayout
                 android:layout_width="0dp"

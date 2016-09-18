@@ -83,4 +83,15 @@
     <string name="weather_not_available">not available</string>
     <string name="text_no_trip_is_created_yet">No trip is created yet</string>
     <string name="text_no_itinerary_is_created_yet">No itinerary is created yet</string>
+
+    <!-- SyncAdapter related -->
+    <string name="sync_account_type" translatable="false">com.liewjuntung</string>
+    <string name="content_authority" translatable="false">com.liewjuntung.travelcompanion</string>
+    <string name="action_travelcompanion_update">ACTION_TRAVELCOMPANION_UPDATE</string>
+
+    <!--widget id pref name-->
+    <string name="widget_trip_pref_name" formatted="false" translatable="false">widget_pref_%d</string>
+    <string name="trip_to_cd">Trip to %s</string>
+    <string name="text_trip_image">trip image</string>
+    <string name="trans_main" translatable="false">trans_main</string>
 </resources>

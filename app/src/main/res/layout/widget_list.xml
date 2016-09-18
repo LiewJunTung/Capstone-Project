@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/trip_list_item"
+    android:layout_width="match_parent"
+    android:layout_height="140dp"
+    android:padding="@dimen/activity_horizontal_margin">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="3"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/iter_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/content_space"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            tools:text="08:00 a.m."
+            />
+
+        <TextView
+            android:id="@+id/iter_name"
+            style="@style/Base.TextAppearance.AppCompat.Subhead.Inverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/content_space"
+            tools:text="Watch Sunrise"/>
+
+        <TextView
+            android:id="@+id/iter_place"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/content_space"
+            android:layout_marginTop="@dimen/content_space"
+            android:textColor="@color/white"
+            tools:text="Visit Bali, Indonesia"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/iter_weather_view"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:orientation="vertical"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        >
+
+        <ImageView
+            android:id="@+id/iter_weather_image"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_horizontal"
+            android:backgroundTint="@color/white"
+            tools:background="@drawable/ic_wb_cloudy_black_24dp"
+            />
+
+        <TextView
+            android:id="@+id/iter_weather_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:maxLines="1"
+            android:textAlignment="center"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Widget.ActionBar.Subtitle.Inverse"
+            tools:text="tornado"
+            />
+
+        <TextView
+            android:id="@+id/iter_temp_high"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:drawableStart="@drawable/ic_up_black_24dp"
+            android:drawableTint="@color/white"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large.Inverse"
+            tools:text="60"
+            />
+
+        <TextView
+            android:id="@+id/iter_temp_low"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:drawableStart="@drawable/ic_down_black_24dp"
+            android:drawableTint="@color/white"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium.Inverse"
+            tools:text="60"
+            />
+    </LinearLayout>
+
+</LinearLayout>
