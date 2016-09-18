@@ -6,8 +6,8 @@ import com.liewjuntung.travelcompanion.models.yahoo.Item;
 import com.liewjuntung.travelcompanion.models.yahoo.Result;
 import com.liewjuntung.travelcompanion.models.yahoo.YahooQuery;
 import com.liewjuntung.travelcompanion.models.yahoo.YahooQueryResult;
-import com.liewjuntung.travelcompanion.networks.RetrofitUtility;
 import com.liewjuntung.travelcompanion.networks.WeatherService;
+import com.liewjuntung.travelcompanion.utility.RetrofitUtility;
 
 import org.junit.Before;
 import org.junit.Test;

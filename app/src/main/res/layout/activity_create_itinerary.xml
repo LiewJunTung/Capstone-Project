@@ -67,6 +67,7 @@
                     <EditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/activity_vertical_margin"
                         android:afterTextChanged="@{vm.itineraryAfterTextChanged}"
                         android:hint="@string/text_itinerary_name"
                         android:inputType="text"
@@ -216,10 +217,19 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="80dp"
-                        android:src="@drawable/weather_sunny"
                         app:layout_columnSpan="2"
+                        app:loadWeather="@{vm.weatherCode}"
                         />
 
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:text="@{vm.weatherText}"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                        app:layout_columnSpan="2"
+                        tools:text="30 C"
+
+                        />
                     <TextView
                         android:text="@string/text_high"
                         android:textAlignment="center"
@@ -229,11 +239,11 @@
                         />
 
                     <TextView
-                        android:text="@{vm.tempHighString}"
                         android:textAlignment="center"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
                         app:layout_columnSpan="1"
                         app:layout_columnWeight="1"
+                        app:loadWeatherTemp="@{vm.tempHigh}"
                         tools:text="60"
                         />
 
@@ -246,11 +256,11 @@
                         />
 
                     <TextView
-                        android:text="@{vm.tempLowString}"
                         android:textAlignment="center"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                         app:layout_columnSpan="1"
                         app:layout_columnWeight="1"
+                        app:loadWeatherTemp="@{vm.tempLow}"
                         />
                 </android.support.v7.widget.GridLayout>
 

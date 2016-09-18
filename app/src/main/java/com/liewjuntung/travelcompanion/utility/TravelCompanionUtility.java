@@ -98,7 +98,10 @@ public class TravelCompanionUtility {
                                       String place,
                                       double latitude,
                                       double longitude,
-                                      String nate
+                                      String note,
+                                      int weatherCode,
+                                      int tempHigh,
+                                      int tempLow
     ) {
         ContentValues values = new ContentValues();
         values.put(ItinerariesTableColumns.TRIP_ID, tripId);
@@ -107,6 +110,12 @@ public class TravelCompanionUtility {
         values.put(ItinerariesTableColumns.PLACE, place);
         values.put(ItinerariesTableColumns.LATITUDE, latitude);
         values.put(ItinerariesTableColumns.LONGITUDE, longitude);
+        values.put(ItinerariesTableColumns.NOTE, note);
+        if (weatherCode > -1) {
+            values.put(ItinerariesTableColumns.WEATHER_CODE, weatherCode);
+            values.put(ItinerariesTableColumns.HIGH_TEMP, tempHigh);
+            values.put(ItinerariesTableColumns.LOW_TEMP, tempLow);
+        }
 
         return activity.getContentResolver().insert(TravelCompanionProvider.Itineraries.ITINERARIES, values);
     }
@@ -119,7 +128,10 @@ public class TravelCompanionUtility {
                                       String place,
                                       double latitude,
                                       double longitude,
-                                      String nate
+                                      String note,
+                                      int weatherCode,
+                                      int tempHigh,
+                                      int tempLow
     ) {
         ContentValues values = new ContentValues();
         values.put(ItinerariesTableColumns.TRIP_ID, tripId);
@@ -128,7 +140,11 @@ public class TravelCompanionUtility {
         values.put(ItinerariesTableColumns.PLACE, place);
         values.put(ItinerariesTableColumns.LATITUDE, latitude);
         values.put(ItinerariesTableColumns.LONGITUDE, longitude);
-
+        if (weatherCode > -1) {
+            values.put(ItinerariesTableColumns.WEATHER_CODE, weatherCode);
+            values.put(ItinerariesTableColumns.HIGH_TEMP, tempHigh);
+            values.put(ItinerariesTableColumns.LOW_TEMP, tempLow);
+        }
         return activity.getContentResolver().update(
                 TravelCompanionProvider.Itineraries.ITINERARIES,
                 values,

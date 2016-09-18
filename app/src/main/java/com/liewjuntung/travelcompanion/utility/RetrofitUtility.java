@@ -1,6 +1,8 @@
-package com.liewjuntung.travelcompanion.networks;
+package com.liewjuntung.travelcompanion.utility;
 
 import com.liewjuntung.travelcompanion.models.yahoo.YahooQueryResult;
+import com.liewjuntung.travelcompanion.networks.ImageService;
+import com.liewjuntung.travelcompanion.networks.WeatherService;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -70,7 +72,7 @@ public class RetrofitUtility {
         String query;
 
         query = String.format(Locale.getDefault(),
-                "select * from weather.forecast where woeid in (SELECT woeid FROM geo.places WHERE text=\"(%s,%s)\")",
+                "select * from weather.forecast where woeid in (SELECT woeid FROM geo.places WHERE text=\"(%s,%s)\") and u='c'",
                 latitude,
                 longitude
         );
@@ -83,7 +85,7 @@ public class RetrofitUtility {
         String query;
 
         query = String.format(Locale.getDefault(),
-                "select * from weather.forecast where woeid in (SELECT woeid FROM geo.places(1) WHERE text=\"%s\")",
+                "select * from weather.forecast where woeid in (SELECT woeid FROM geo.places(1) WHERE text=\"%s\") and u='c'",
                 place);
 
         return service.yahooQuery(query);

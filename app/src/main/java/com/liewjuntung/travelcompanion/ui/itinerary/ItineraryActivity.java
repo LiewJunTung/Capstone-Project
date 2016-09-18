@@ -10,6 +10,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -55,6 +56,7 @@ public class ItineraryActivity extends AppCompatActivity
         mItineraryId = getIntent().getIntExtra(INTENT_ITINERARY_ID, 0);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_itinerary);
         getSupportLoaderManager().initLoader(ITINERARY_LOADER_ID, null, this);
+        Log.d(LOG_TAG, mDateFrom + " " + mDateUntil);
     }
 
     @Override

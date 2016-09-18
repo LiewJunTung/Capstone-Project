@@ -6,6 +6,8 @@
         <variable
             name="vm"
             type="com.liewjuntung.travelcompanion.ui.modify_itinerary.ModifyItineraryViewModel"/>
+
+        <import type="android.view.View"/>
     </data>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -196,6 +198,71 @@
                         android:text="@{vm.note}"
                         tools:text="2000"/>
                 </android.support.design.widget.TextInputLayout>
+
+                <android.support.v7.widget.GridLayout
+                    android:id="@+id/weather_grid"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginEnd="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginStart="@dimen/drawable_top_bottom_margin"
+                    android:layout_marginTop="20dp"
+                    android:visibility="@{vm.hasWeatherForecast?View.VISIBLE:View.GONE}"
+                    app:columnCount="2"
+                    app:layout_columnSpan="3"
+                    app:layout_columnWeight="1"
+                    >
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp"
+                        app:layout_columnSpan="2"
+                        app:loadWeather="@{vm.weatherCode}"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:text="@{vm.weatherText}"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                        app:layout_columnSpan="2"
+                        tools:text="30 C"
+
+                        />
+
+                    <TextView
+                        android:text="@string/text_high"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                        app:layout_columnSpan="1"
+                        app:layout_columnWeight="1"
+                        />
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+                        app:layout_columnSpan="1"
+                        app:layout_columnWeight="1"
+                        app:loadWeatherTemp="@{vm.tempHigh}"
+                        tools:text="60"
+                        />
+
+                    <TextView
+                        android:text="@string/text_low"
+                        android:textAlignment="center"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                        app:layout_columnSpan="1"
+                        app:layout_columnWeight="1"
+                        />
+
+                    <TextView
+                        android:textAlignment="center"
+                        android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
+                        app:layout_columnSpan="1"
+                        app:layout_columnWeight="1"
+                        app:loadWeatherTemp="@{vm.tempLow}"
+                        />
+                </android.support.v7.widget.GridLayout>
             </android.support.v7.widget.GridLayout>
         </android.support.v4.widget.NestedScrollView>
 

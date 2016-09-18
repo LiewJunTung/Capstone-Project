@@ -2,6 +2,7 @@ package com.liewjuntung.travelcompanion.utility;
 
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.liewjuntung.travelcompanion.R;
 import com.squareup.picasso.Picasso;
@@ -28,5 +29,26 @@ public class CustomBindingAdapter {
                 .load(drawables)
                 .error(R.drawable.ic_flag_black_24dp)
                 .into(imageView);
+    }
+
+    @BindingAdapter("bind:loadWeather")
+    public static void loadWeather(ImageView imageView, int weatherCode) {
+        if (weatherCode < 0 && weatherCode > 47) {
+            return;
+        }
+        imageView.setImageResource(WeatherUtility.getWeatherDrawables(weatherCode));
+    }
+
+    @BindingAdapter("bind:loadWeatherString")
+    public static void loadWeatherString(TextView textView, int weatherCode) {
+        if (weatherCode < 0 && weatherCode > 47) {
+            return;
+        }
+        textView.setText(WeatherUtility.getWeatherStringFromCode(textView.getContext(), weatherCode));
+    }
+
+    @BindingAdapter("bind:loadWeatherTemp")
+    public static void loadWeatherTemp(TextView textView, int temperature) {
+        textView.setText(textView.getContext().getString(R.string.format_temperature, temperature));
     }
 }

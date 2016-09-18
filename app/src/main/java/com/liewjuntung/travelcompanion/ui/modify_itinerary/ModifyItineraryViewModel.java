@@ -12,14 +12,30 @@ import android.view.View;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
+import com.liewjuntung.travelcompanion.R;
 import com.liewjuntung.travelcompanion.models.Itinerary;
+import com.liewjuntung.travelcompanion.models.Weather;
+import com.liewjuntung.travelcompanion.models.yahoo.YahooQueryResult;
+import com.liewjuntung.travelcompanion.networks.WeatherService;
+import com.liewjuntung.travelcompanion.utility.RetrofitUtility;
 import com.liewjuntung.travelcompanion.utility.TravelCompanionUtility;
+import com.liewjuntung.travelcompanion.utility.WeatherUtility;
 
 import org.threeten.bp.LocalDate;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.LocalTime;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.format.DateTimeFormatter;
+
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Popular Movie App
@@ -38,8 +54,9 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
             return new ModifyItineraryViewModel[size];
         }
     };
+    private static final String LOG_TAG = ModifyItineraryViewModel.class.getSimpleName();
+    private final WeatherService mWeatherService = RetrofitUtility.initWeatherService();
     ModifyItineraryActivity mActivity;
-    int weatherCode;
     private int id;
     private int tripId;
     private String name;
@@ -51,6 +68,39 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
     private double longitude;
     private double latitude;
     private String note;
+    private int weatherCode = -1;
+    private int tempHigh;
+    private int tempLow;
+    private boolean hasWeatherForecast = false;
+    private boolean isLoadingWeather = false;
+    private Timer mTimer = new Timer();
+    private String weatherText;
+    private final Callback<YahooQueryResult> mCallback = new Callback<YahooQueryResult>() {
+        @Override
+        public void onResponse(Call<YahooQueryResult> call, Response<YahooQueryResult> response) {
+            if (response.isSuccessful() && response.body().getQuery().getCount() > 0) {
+                List<Weather> weatherList = response.body().getQuery().getResult().getChannel().getItem().getWeatherList();
+
+                for (Weather weather : weatherList) {
+                    if (LocalDate.parse(weather.getDate(),
+                            DateTimeFormatter.ofPattern("dd MMM yyyy")).equals(LocalDate.parse(mDate))) {
+                        setWeather(weather);
+                        break;
+                    }
+                }
+            } else {
+                weatherCode = -1;
+            }
+            isLoadingWeather = false;
+        }
+
+        @Override
+        public void onFailure(Call<YahooQueryResult> call, Throwable t) {
+            Log.d(TAG, "onFailure: " + t.getMessage(), t);
+            isLoadingWeather = false;
+            weatherCode = -1;
+        }
+    };
 
     public ModifyItineraryViewModel(ModifyItineraryActivity activity, Itinerary itinerary, String tripStartDate, String tripEndDate) {
         mActivity = activity;
@@ -66,9 +116,11 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
         this.latitude = itinerary.getLatitude();
         this.note = itinerary.getNote();
         this.weatherCode = itinerary.getWeatherCode();
+        initWeather(itinerary.getWeatherCode(), itinerary.getHighTemp(), itinerary.getLowTemp());
     }
 
     protected ModifyItineraryViewModel(Parcel in) {
+        this.id = in.readInt();
         this.tripId = in.readInt();
         this.name = in.readString();
         this.mDate = in.readString();
@@ -80,6 +132,96 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
         this.latitude = in.readDouble();
         this.note = in.readString();
         this.weatherCode = in.readInt();
+        this.tempHigh = in.readInt();
+        this.tempLow = in.readInt();
+        this.hasWeatherForecast = in.readByte() != 0;
+        this.isLoadingWeather = in.readByte() != 0;
+        this.weatherText = in.readString();
+    }
+
+    public void setWeather(Weather weather) {
+        if (weather == null) {
+            hasWeatherForecast = false;
+            notifyChange();
+            return;
+        }
+        hasWeatherForecast = true;
+        weatherCode = weather.getCode();
+        weatherText = WeatherUtility.getWeatherStringFromCode(mActivity, weatherCode);
+        tempHigh = weather.getHigh();
+        tempLow = weather.getLow();
+        notifyChange();
+    }
+
+    public void initWeather(int weatherCode, int tempHigh, int tempLow) {
+        if (weatherCode < 0 || weatherCode > 47) {
+            hasWeatherForecast = false;
+            notifyChange();
+            return;
+        }
+        hasWeatherForecast = true;
+        this.weatherCode = weatherCode;
+        this.tempHigh = tempHigh;
+        this.tempLow = tempLow;
+        weatherText = WeatherUtility.getWeatherStringFromCode(mActivity, weatherCode);
+        notifyChange();
+    }
+
+    //delay 500 milliseconds as soon as aftertextlistener fired
+    public void initWeatherForecastLatLong() {
+        if (latitude == 0.0 && longitude == 0.0) {
+            initWeatherForecastPlace();
+            return;
+        }
+        mTimer.cancel();
+        if (place == null || mDate == null || isLoadingWeather) {
+            return;
+        }
+        isLoadingWeather = true;
+        RetrofitUtility.getWeatherByLongAndLat(mWeatherService, latitude, longitude).enqueue(mCallback);
+    }
+
+    public void initWeatherForecastPlace() {
+        if (place == null || mDate == null || isLoadingWeather) {
+            return;
+        }
+        mTimer.cancel();
+        mTimer = new Timer();
+        mTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                isLoadingWeather = true;
+                RetrofitUtility.getWeatherByPlaceName(mWeatherService, place).enqueue(mCallback);
+            }
+        }, 1000);
+    }
+
+    public String getWeatherText() {
+        return weatherText;
+    }
+
+    public int getWeatherCode() {
+        return weatherCode;
+    }
+
+    public int getTempHigh() {
+        return tempHigh;
+    }
+
+    public int getTempLow() {
+        return tempLow;
+    }
+
+    public String getTempLowString() {
+        return mActivity.getString(R.string.format_temperature, tempLow);
+    }
+
+    public String getTempHighString() {
+        return mActivity.getString(R.string.format_temperature, tempHigh);
+    }
+
+    public boolean isHasWeatherForecast() {
+        return hasWeatherForecast;
     }
 
     public void setActivity(ModifyItineraryActivity activity) {
@@ -89,7 +231,7 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
     }
 
     public void clickDateDialog(View view) {
-        LocalDateTime date = LocalDateTime.now();
+        LocalDate date = LocalDate.parse(mDate);
         LocalDate tripMinDate = LocalDate.parse(tripStartDate);
 
         DatePickerDialog dialog = new DatePickerDialog(mActivity, new DatePickerDialog.OnDateSetListener() {
@@ -97,16 +239,15 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                 LocalDate localDate = LocalDate.of(year, month + 1, dayOfMonth);
                 mDate = localDate.toString();
+                initWeatherForecastLatLong();
                 notifyChange();
             }
         }, date.getYear(), date.getMonthValue() - 1, date.getDayOfMonth());
         dialog.getDatePicker().setMinDate(tripMinDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        if (tripEndDate != null) {
-            LocalDate dateTo = LocalDate.parse(tripEndDate);
-            dialog.getDatePicker().setMaxDate(dateTo.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
-        }
-        dialog.getDatePicker().setMinDate(date.toLocalDate().atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        LocalDate dateTo = LocalDate.parse(tripEndDate);
+        dialog.getDatePicker().setMaxDate(dateTo.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         dialog.show();
+        Log.d(LOG_TAG, date.toString() + " " + tripMinDate.toString() + " " + dateTo.toString() + " ");
     }
 
     public void clickTimeDialog(View view) {
@@ -130,7 +271,8 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
 
     public void placeAfterTextChanged(Editable s) {
         Log.e("TextWatcherTest", "afterTextChanged:\t" + s.toString());
-        setPlace(s.toString());
+        initWeatherForecastPlace();
+        setPlace(s.toString(), true);
     }
 
     public void noteAfterTextChanged(Editable s) {
@@ -141,7 +283,7 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
     public void saveData(View view) {
         String dateTime = mDate + " " + time;
         TravelCompanionUtility.updateItinerary(mActivity, id,
-                tripId, name, dateTime, place, latitude, longitude, note);
+                tripId, name, dateTime, place, latitude, longitude, note, weatherCode, tempHigh, tempLow);
         mActivity.setResult(Activity.RESULT_OK);
         mActivity.finish();
     }
@@ -187,7 +329,10 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
         return place;
     }
 
-    public void setPlace(String place) {
+    public void setPlace(String place, boolean loadWeather) {
+        if (loadWeather) {
+            initWeatherForecastPlace();
+        }
         this.place = place;
         notifyChange();
     }
@@ -248,6 +393,7 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(this.id);
         dest.writeInt(this.tripId);
         dest.writeString(this.name);
         dest.writeString(this.mDate);
@@ -259,5 +405,10 @@ public class ModifyItineraryViewModel extends BaseObservable implements Parcelab
         dest.writeDouble(this.latitude);
         dest.writeString(this.note);
         dest.writeInt(this.weatherCode);
+        dest.writeInt(this.tempHigh);
+        dest.writeInt(this.tempLow);
+        dest.writeByte(this.hasWeatherForecast ? (byte) 1 : (byte) 0);
+        dest.writeByte(this.isLoadingWeather ? (byte) 1 : (byte) 0);
+        dest.writeString(this.weatherText);
     }
 }

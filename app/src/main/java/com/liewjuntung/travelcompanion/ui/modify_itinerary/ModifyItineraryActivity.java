@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -35,6 +36,7 @@ public class ModifyItineraryActivity
 
     private static final String BUNDLE_VIEWMODEL = "itinerary_view_model";
     private static final int GET_FINE_LOCATION_PERMISSION = 100;
+    private static final String LOG_TAG = ModifyItineraryActivity.class.getSimpleName();
     ActivityModifyItineraryBinding mBinding;
     private GoogleApiClient mGoogleApiClient;
     private ModifyItineraryViewModel mViewModel;
@@ -45,7 +47,8 @@ public class ModifyItineraryActivity
         Intent intent = getIntent();
         Itinerary itinerary = intent.getParcelableExtra(MODIFY_TRIP_ITINARARY);
         String dateFrom = intent.getStringExtra(MODIFY_TRIP_DATE_FROM);
-        String dateTo = intent.getStringExtra(MODIFY_TRIP_DATE_FROM);
+        String dateTo = intent.getStringExtra(MODIFY_TRIP_DATE_UNTIL);
+        Log.d(LOG_TAG, dateFrom + " " + dateTo);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_modify_itinerary);
         if (savedInstanceState != null) {
             mViewModel = savedInstanceState.getParcelable(BUNDLE_VIEWMODEL);
@@ -121,9 +124,10 @@ public class ModifyItineraryActivity
         if (requestCode == PLACE_PICKER_REQUEST && resultCode == RESULT_OK) {
             Place place = PlacePicker.getPlace(this, data);
             LatLng latLng = place.getLatLng();
-            mBinding.getVm().setPlace(place.getName().toString());
+            mBinding.getVm().setPlace(place.getName().toString(), false);
             mBinding.getVm().setLatitude(latLng.latitude);
             mBinding.getVm().setLongitude(latLng.longitude);
+            mBinding.getVm().initWeatherForecastLatLong();
             // String toastMsg = String.format("Place: %s", place.getName());
             // Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
 

@@ -13,7 +13,7 @@ import com.liewjuntung.travelcompanion.BuildConfig;
 import com.liewjuntung.travelcompanion.R;
 import com.liewjuntung.travelcompanion.models.pixabay.PixabayResult;
 import com.liewjuntung.travelcompanion.networks.ImageService;
-import com.liewjuntung.travelcompanion.networks.RetrofitUtility;
+import com.liewjuntung.travelcompanion.utility.RetrofitUtility;
 import com.liewjuntung.travelcompanion.utility.TravelCompanionUtility;
 import com.mukesh.countrypicker.fragments.CountryPicker;
 import com.mukesh.countrypicker.interfaces.CountryPickerListener;
