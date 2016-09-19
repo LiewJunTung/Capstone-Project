@@ -94,4 +94,6 @@
     <string name="trip_to_cd">Trip to %s</string>
     <string name="text_trip_image">trip image</string>
     <string name="trans_main" translatable="false">trans_main</string>
+    <string name="text_init_place_picker">Initialize place picker</string>
+    <string name="text_empty">empty</string>
 </resources>

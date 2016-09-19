@@ -59,7 +59,7 @@
             android:layout_gravity="center_horizontal"
             android:backgroundTint="@color/white"
             tools:background="@drawable/ic_wb_cloudy_black_24dp"
-            />
+            tools:ignore="ContentDescription"/>
 
         <TextView
             android:id="@+id/iter_weather_description"
