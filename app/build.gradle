@@ -26,6 +26,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             buildConfigField 'String', 'ADS_INTERSTITIAL_ID', ADS_INTERSTITIAL_ID
             buildConfigField 'String', 'PIXABAY_API_KEY', PIXABAY_API_KEY
+            signingConfig signingConfigs.config
         }
         debug {
             buildConfigField 'String', 'ADS_INTERSTITIAL_ID', ADS_INTERSTITIAL_ID
